@@ -11,23 +11,26 @@ driver.get_screenshot_as_file("capture.png")
 from selenium import webdriver
 from PIL import Image
 
-driver = webdriver.Chrome()
-driver.get('https://www.google.co.in')
+driver = webdriver.Chrome(executable_path=r'D:\curl\chromedriver.exe')
+#driver.manage().timeouts().implicitlyWait(5000, TimeUnit.SECONDS);
+driver.get('https://www.google.ru')
+#driver.get('http://193.169.5.154/mjpg/video.mjpg')
 
-element = driver.find_element_by_id("lst-ib")
+#element = driver.find_element_by_id("lst-ib")
 
-location = element.location
-size = element.size
+#location = element.location
+#size = element.size
 
 driver.save_screenshot("shot.png")
 
-x = location['x']
-y = location['y']
-w = size['width']
-h = size['height']
-width = x + w
-height = y + h
+x = 65
+y = 144
+width = 800
+height = 530
+#width = x + w
+#height = y + h
 
 im = Image.open('shot.png')
 im = im.crop((int(x), int(y), int(width), int(height)))
 im.save('image.png')
+#im.delete('shot.png')
