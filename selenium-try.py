@@ -13,7 +13,8 @@ from PIL import Image
 
 driver = webdriver.Chrome(executable_path=r'D:\curl\chromedriver.exe')
 #driver.manage().timeouts().implicitlyWait(5000, TimeUnit.SECONDS);
-driver.get('https://www.google.ru')
+#driver.get('https://www.google.ru')
+driver.get('http://94.72.19.56/mjpg/video.mjpg')
 #driver.get('http://193.169.5.154/mjpg/video.mjpg')
 
 #element = driver.find_element_by_id("lst-ib")
