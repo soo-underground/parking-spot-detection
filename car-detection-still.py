@@ -59,51 +59,36 @@ parked_car_boxes = None
 # Load the video file we want to run detection on
 video_capture = cv2.VideoCapture(VIDEO_SOURCE)
 
+img = cv2.imread('sources/kupchino.png')
+rgb_image = img[:, :, ::-1]
+results = model.detect([rgb_image], verbose=0)
 
+# Mask R-CNN assumes we are running detection on multiple images.
+# We only passed in one image to detect, so only grab the first result.
+r = results[0]
 
-# Loop over each frame of video
-while video_capture.isOpened():
-    success, frame = video_capture.read()
-    if not success:
-        break
+# The r variable will now have the results of detection:
+# - r['rois'] are the bounding box of each detected object
+# - r['class_ids'] are the class id (type) of each detected object
+# - r['scores'] are the confidence scores for each detection
+# - r['masks'] are the object masks for each detected object (which gives you the object outline)
 
-    # Convert the image from BGR color (which OpenCV uses) to RGB color
-    rgb_image = frame[:, :, ::-1]
+# Filter the results to only grab the car / truck bounding boxes
+car_boxes = get_car_boxes(r['rois'], r['class_ids'])
+f= open("spots.txt","w+")
+print("Cars found in frame of video:")
 
-    # Run the image through the Mask R-CNN model to get results.
-    results = model.detect([rgb_image], verbose=0)
+# Draw each box on the frame
+for box in car_boxes:
+    print("Car: ", box)
+    f.write(str(box))
+    y1, x1, y2, x2 = box
 
-    # Mask R-CNN assumes we are running detection on multiple images.
-    # We only passed in one image to detect, so only grab the first result.
-    r = results[0]
+    # Draw the box
+    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 1)
 
-    # The r variable will now have the results of detection:
-    # - r['rois'] are the bounding box of each detected object
-    # - r['class_ids'] are the class id (type) of each detected object
-    # - r['scores'] are the confidence scores for each detection
-    # - r['masks'] are the object masks for each detected object (which gives you the object outline)
-
-    # Filter the results to only grab the car / truck bounding boxes
-    car_boxes = get_car_boxes(r['rois'], r['class_ids'])
-
-    print("Cars found in frame of video:")
-
-    # Draw each box on the frame
-    for box in car_boxes:
-        print("Car: ", box)
-
-        y1, x1, y2, x2 = box
-
-        # Draw the box
-        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 1)
-
-    # Show the frame of video on the screen
-    cv2.imshow('Video', frame)
-
-    # Hit 'q' to quit
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Clean up everything when finished
-video_capture.release()
+# Show the frame of video on the screen
+f.close()
+cv2.imshow('image', img)
+cv2.waitKey(0)
 cv2.destroyAllWindows()
