@@ -1,5 +1,5 @@
-import os
 import numpy as np
+import os
 import cv2
 import mrcnn.config
 import mrcnn.utils
@@ -30,32 +30,23 @@ def get_car_boxes(boxes, class_ids):
 
 # Root directory of the project
 ROOT_DIR = Path(".")
-
 # Directory to save logs and trained model
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
-
 # Local path to trained weights file
 COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
-
 # Download COCO trained weights from Releases if needed
 if not os.path.exists(COCO_MODEL_PATH):
     mrcnn.utils.download_trained_weights(COCO_MODEL_PATH)
-
 # Directory of images to run detection on
 IMAGE_DIR = os.path.join(ROOT_DIR, "images")
-
 # Video file or camera to process - set this to 0 to use your webcam instead of a video file
 VIDEO_SOURCE = "screen-capture.mp4"
-
 # Create a Mask-RCNN model in inference mode
 model = MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=MaskRCNNConfig())
-
 # Load pre-trained model
 model.load_weights(COCO_MODEL_PATH, by_name=True)
-
 # Location of parking spaces
 parked_car_boxes = None
-
 # Load the video file we want to run detection on
 video_capture = cv2.VideoCapture(VIDEO_SOURCE)
 
@@ -90,3 +81,16 @@ np.save('spots', car_boxes)
 cv2.imshow('image', img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+
+
+
+
+
+
+
+spots = np.load('spots.npy')
+for spot in spots:
+    print(spot, '===')
+    for i in spot:
+        print(i)
